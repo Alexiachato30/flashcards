@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Flashcards Interativos</title>
+  <style>
+    :root {
+      --bg: #f0f0f0;
+      --text: #222;
+      --primary: #007bff;
+      --card-front: #007bff;
+      --card-back: #ffffff;
+      --shadow: rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #e4e4e4;
+      --primary: #00bfff;
+      --card-front: #1e1e1e;
+      --card-back: #333;
+      --shadow: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #card-container {
+      perspective: 1000px;
+      width: 300px;
+      height: 200px;
+      margin-top: 30px;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .flipped {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .front {
+      background-color: var(--card-front);
+      color: white;
+    }
+
+    .back {
+      background-color: var(--card-back);
+      color: var(--text);
+      transform: rotateY(180deg);
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #acertos {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #tema {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      background-color: transparent;
+      border: 1px solid var(--text);
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: var(--text);
+    }
+
+    @media (max-width: 400px) {
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button id="tema">Modo Escuro</button>
+  <h1>Flashcards de Programação</h1>
+  <div id="card-container">
+    <div class="card" id="flashcard" onclick="flipCard()">
+      <div class="face front" id="pergunta">Carregando...</div>
+      <div class="face back" id="resposta">Carregando...</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onclick="acertar()">Acertei</button>
+    <button onclick="proximo()">Próximo</button>
+  </div>
+
+  <div id="acertos">Acertos: 0</div>
+
+  <script>
+    const cards = [
+      { pergunta: "O que é HTML?", resposta: "Linguagem de marcação usada para estruturar páginas da web." },
+      { pergunta: "Para que serve o CSS?", resposta: "Serve para estilizar elementos HTML com cores, tamanhos, layouts etc." },
+      { pergunta: "O que é JavaScript?", resposta: "Linguagem de programação para criar interatividade em páginas web." },
+      { pergunta: "O que faz a tag <title>?", resposta: "Define o título que aparece na aba do navegador." },
+      { pergunta: "Qual a diferença entre id e class?", resposta: "'id' é único, 'class' pode ser usada em vários elementos." },
+      { pergunta: "O que é uma função em JavaScript?", resposta: "Bloco de código que pode ser reutilizado ao ser chamado." },
+      { pergunta: "Como fazemos um comentário em HTML?", resposta: "<!-- assim -->" },
+      { pergunta: "Como declarar variável em JavaScript?", resposta: "Com let, const ou var." },
+      { pergunta: "O que é flexbox no CSS?", resposta: "Uma forma de organizar elementos em layout flexível." }
+    ];
+
+    let index = 0;
+    let acertos = 0;
+    let virado = false;
+
+    const pergunta = document.getElementById("pergunta");
+    const resposta = document.getElementById("resposta");
+    const card = document.getElementById("flashcard");
+    const acertoDiv = document.getElementById("acertos");
+
+    function mostrarCard() {
+      pergunta.textContent = cards[index].pergunta;
+      resposta.textContent = cards[index].resposta;
+      card.classList.remove("flipped");
+      virado = false;
+    }
+
+    function flipCard() {
+      virado = !virado;
+      card.classList.toggle("flipped");
+    }
+
+    function proximo() {
+      index = (index + 1) % cards.length;
+      mostrarCard();
+    }
+
+    function acertar() {
+      acertos++;
+      acertoDiv.textContent = `Acertos: ${acertos}`;
+      proximo();
+    }
+
+    // Modo escuro
+    const temaBtn = document.getElementById("tema");
+    temaBtn.onclick = () => {
+      document.body.classList.toggle("dark");
+      temaBtn.textContent = document.body.classList.contains("dark") ? "Modo Claro" : "Modo Escuro";
+    };
+
+    mostrarCard();
+  </script>
+
+</body>
+</html>
